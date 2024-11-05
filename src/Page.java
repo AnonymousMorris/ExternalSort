@@ -21,7 +21,7 @@ public class Page {
     }
 
     public Record nextRecord() {
-        assert(!isEmpty());
+        assert(!hasNext());
         return this.records[readPos++];
     }
     
@@ -36,8 +36,8 @@ public class Page {
         }
     }
 
-    public boolean isEmpty() {
-        return readPos >= capacity;
+    public boolean hasNext() {
+        return readPos < capacity;
     }
 
     public boolean isFull() {

@@ -2,8 +2,10 @@ import java.io.IOException;
 
 public class Controller {
     // private Reader reader;
+    // private MinHeap<Record> minheap;
     
     public Controller() {
+        // this.minheap = new MinHeap<>(, heapSize, capacity)
         // this.reader = new Reader(filename);
     }
 
