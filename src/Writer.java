@@ -8,7 +8,8 @@ public class Writer {
     private File tmpFile;
     private RandomAccessFile raf;
     
-    public Writer(String filename) throws IOException {
+    public Writer() throws IOException {
+        String filename = "tmp";
         this.tmpFile = File.createTempFile(filename, ".run");
         this.raf = new RandomAccessFile(tmpFile, "w");
         raf.seek(0);

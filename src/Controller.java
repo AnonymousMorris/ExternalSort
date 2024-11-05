@@ -2,10 +2,15 @@ import java.io.IOException;
 
 public class Controller {
     // private Reader reader;
-    // private MinHeap<Record> minheap;
+    private MinHeap<Record> minheap;
+    private Writer writer;
+    private Page in;
+    private Page out;
     
-    public Controller() {
-        // this.minheap = new MinHeap<>(, heapSize, capacity)
+    public Controller() throws IOException {
+        Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
+        this.minheap = new MinHeap<Record>(records, 0, ByteFile.RECORDS_PER_BLOCK);
+        this.writer = new Writer();
         // this.reader = new Reader(filename);
     }
 
@@ -13,12 +18,30 @@ public class Controller {
         Reader reader = new Reader(filename);
         int counter = 0;
         while (reader.hasNext()) {
-            Page page = reader.nextPage();
-            printPage(page);
-            if (counter % 5 == 4) {
-            	System.out.print("\n");
+            this.in = reader.nextPage();
+
+            sort(this.in);
+
+            if (counter++ % 5 == 4) {
+                System.out.print("\n");
             }
-            counter++;
+        }
+    }
+
+    private void sort(Page page) throws IOException {
+        printPage(page);
+
+        while (page.hasNext()) {
+            Record min = this.minheap.removeMin();
+            this.out.addRecord(min);
+
+            Record record = page.nextRecord();
+            this.minheap.insert(record);
+
+            if (this.out.isFull()) {
+                printPage(this.out);
+                writer.writePage(this.out);
+            }
         }
     }
 
