@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class Writer {
 
@@ -26,7 +28,9 @@ public class Writer {
         this.raf.write(basicBuffer);
     }
 
-    public void swapFile() throws IOException {
+    public void swapFile(String filename) throws IOException {
+        File originalFile = new File(filename);
+        Files.move(tmpFile.toPath(), originalFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         raf.close();
     }
 }

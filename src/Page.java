@@ -3,6 +3,7 @@ import java.nio.ByteBuffer;
 public class Page {
     public Record[] records;
     public int capacity;
+    // private int size;
     private int readPos;
     private int writePos;
     
@@ -10,6 +11,7 @@ public class Page {
     public Page(ByteBuffer dataBuffer, int inputRecordCnt, int capacity) {
         // TODO: Make sure that all pages will be full
         this.capacity = capacity;
+        // this.size = inputRecordCnt;
         this.readPos = 0;
         this.writePos = inputRecordCnt;
         this.records = new Record[capacity];
@@ -26,12 +28,14 @@ public class Page {
     }
     
     public boolean addRecord(Record record) {
+        // assert(!this.isFull()) : "failed to add record because the page is full";
         if (this.isFull()) {
             return false;
         }
         else {
             this.records[writePos] = record;
-            writePos++;
+            this.writePos++;
+            // this.size++;
             return true;
         }
     }
