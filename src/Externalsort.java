@@ -29,14 +29,20 @@
 // during the discussion. I have violated neither the spirit nor
 // letter of this restriction.
 
+import java.io.IOException;
+
 public class Externalsort {
 
     /**
      * @param args
      *     Command line parameters
+     * @throws IOException 
      */
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) throws IOException {
+        assert(args.length == 1);
+        String filename = args[0];
+        Controller controller = new Controller();
+        controller.run(filename);
         
     }
 

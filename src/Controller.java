@@ -9,9 +9,14 @@ public class Controller {
 
     public void run(String filename) throws IOException {
         Reader reader = new Reader(filename);
+        int counter = 0;
         while (reader.hasNext()) {
             Page page = reader.nextPage();
             printPage(page);
+            if (counter % 5 == 4) {
+            	System.out.print("\n");
+            }
+            counter++;
         }
     }
 
