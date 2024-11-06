@@ -1,9 +1,11 @@
 import java.nio.ByteBuffer;
 
+import jdk.jfr.consumer.RecordedClass;
+
 public class Page {
     public Record[] records;
     public int capacity;
-    // private int size;
+    public int size;
     private int readPos;
     private int writePos;
     
@@ -11,7 +13,7 @@ public class Page {
     public Page(ByteBuffer dataBuffer, int inputRecordCnt, int capacity) {
         // TODO: Make sure that all pages will be full
         this.capacity = capacity;
-        // this.size = inputRecordCnt;
+        this.size = inputRecordCnt;
         this.readPos = 0;
         this.writePos = inputRecordCnt;
         this.records = new Record[capacity];
@@ -35,7 +37,7 @@ public class Page {
         else {
             this.records[writePos] = record;
             this.writePos++;
-            // this.size++;
+            this.size++;
             return true;
         }
     }
@@ -46,5 +48,34 @@ public class Page {
 
     public boolean isFull() {
         return writePos == capacity;
+    }
+
+    public String toString() {
+        String ans = "";
+        for (int i = 0; i < records.length; i++) {
+            ans += records[i].getID() + " " + records[i].getKey() + " ";
+            if (i % 5 == 4) {
+                ans += "\n";
+            }
+        }
+        return ans;
+    }
+
+    public boolean isEqual(Page other) {
+        if (this.capacity != other.capacity) {
+            return false;
+        }
+        if (this.size != other.size) {
+            return false;
+        }
+        while (this.hasNext()) {
+            Record record = this.nextRecord();
+            Record otherRecord = other.nextRecord();
+
+            if (!record.equals(otherRecord)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -38,8 +38,6 @@ public class Controller {
     }
 
     private void sort(Page page) throws IOException {
-        printPage(page);
-
         while (page.hasNext()) {
             // get Min record and push to output buffer
             Record min = this.minheap.removeMin();
@@ -51,8 +49,9 @@ public class Controller {
 
             // send output page to be written into memory if full
             if (this.out.isFull()) {
-                printPage(this.out);
-                writer.writePage(this.out);
+                String text = this.out.toString();
+                System.out.print(text);
+                writer.writePage(text);
                 this.out = new Page(null, 0, ByteFile.RECORDS_PER_BLOCK);
             }
         }
@@ -67,15 +66,11 @@ public class Controller {
 
             // Send page to be written to memory if full
             if (this.out.isFull()) {
-                printPage(this.out);
-                writer.writePage(this.out);
+                String text = this.out.toString();
+                System.out.print(text);
+                writer.writePage(text);
                 this.out = new Page(null, 0, ByteFile.RECORDS_PER_BLOCK);
             }
         }
-    }
-
-    private void printPage(Page page) {
-        System.out.print(page.records[0].getID() + " ");
-        System.out.print(page.records[0].getKey() + " ");
     }
 }

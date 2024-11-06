@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -17,15 +18,8 @@ public class Writer {
         raf.seek(0);
     }
 
-    public void writePage(Page page) throws IOException {
-        byte[] basicBuffer = new byte[page.capacity];
-        ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
-        while (page.hasNext()) {
-            Record record = page.nextRecord();
-            bb.putLong(record.getID());
-            bb.putDouble(record.getKey());
-        }
-        this.raf.write(basicBuffer);
+    public void writePage(String text) throws IOException {
+        this.raf.write(text.getBytes(StandardCharsets.UTF_8));
     }
 
     public void swapFile(String filename) throws IOException {
