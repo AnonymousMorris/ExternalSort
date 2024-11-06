@@ -18,10 +18,14 @@ public class Reader {
         byte[] basicBuffer = new byte[ByteFile.BYTES_PER_BLOCK];
         ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
         raf.read(basicBuffer);
-        return new Page(bb, ByteFile.RECORDS_PER_BLOCK, ByteFile.RECORDS_PER_BLOCK);
+        return new Page(bb);
     }
 
     public boolean hasNext() throws IOException {
         return raf.getFilePointer() < raf.length();
+    }
+    
+    public void close() throws IOException {
+        raf.close();
     }
 }

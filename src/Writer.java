@@ -27,4 +27,8 @@ public class Writer {
         Files.move(tmpFile.toPath(), originalFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         raf.close();
     }
+
+    public void close() throws IOException {
+        this.raf.close();
+    }
 }

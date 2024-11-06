@@ -6,13 +6,13 @@ public class Controller {
     private Writer writer;
     private Page in;
     private Page out;
-    
+
     public Controller() throws IOException {
         Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
         this.minheap = new MinHeap<Record>(records, 0, ByteFile.RECORDS_PER_BLOCK);
         this.writer = new Writer();
         this.in = null;
-        this.out = new Page(null, 0, ByteFile.RECORDS_PER_BLOCK);
+        this.out = new Page(null);
         // this.reader = new Reader(filename);
     }
 
@@ -21,48 +21,56 @@ public class Controller {
         int counter = 0;
 
         // put initial 8 pages into min heap
-//        for (int i = 0; i < 8 && reader.hasNext(); i++) {
-//            this.in = reader.nextPage();
-//            Record[] heap = this.in.records;
-//        }
-        this.in = reader.nextPage();
-        Record[] heap = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
-        System.arraycopy(this.in.records, 0, heap, 0, ByteFile.RECORDS_PER_BLOCK);
-        this.minheap = new MinHeap(heap, ByteFile.RECORDS_PER_BLOCK, ByteFile.RECORDS_PER_BLOCK * 8);
-        
-        
+        int heapSize = 0;
+        Record[] heap = new Record[8 * ByteFile.RECORDS_PER_BLOCK];
+        for (int i = 0; i < 8 && reader.hasNext(); i++) {
+            this.in = reader.nextPage();
+            System.arraycopy(this.in.getRecords(), 0, heap, i * ByteFile.RECORDS_PER_BLOCK, this.in.getSize());
+            heapSize += this.in.getSize();
+        }
+        minheap = new MinHeap<Record>(heap, heapSize, 8 * ByteFile.RECORDS_PER_BLOCK);
+
         // sort
         while (reader.hasNext()) {
             this.in = reader.nextPage();
-
             sort(this.in);
-
-//            if (counter++ % 5 == 4) {
-//                System.out.print("\n");
-//            }
+            // if (counter++ % 5 == 4) {
+            //     System.out.print("\n");
+            // }
         }
+
+        flushHeap();
+        writer.close();
     }
 
     private void sort(Page page) throws IOException {
-        while (minheap.heapSize() > 0) {
-            // get Min record and push to output buffer
-            Record min = this.minheap.removeMin();
-            this.out.addRecord(min);
+        while (page.hasNext()) {
+            while (minheap.heapSize() > 0 && page.hasNext()) {
+                // get Min record and push to output buffer
+                Record min = this.minheap.removeMin();
+                Record newRecord = page.nextRecord();
+                if (newRecord.getKey() < min.getKey()) {
+                    // hide new record
+                    this.minheap.modify(minheap.heapSize(), newRecord);
+                }
+                else {
+                    this.minheap.insert(newRecord);
+                }
 
-            // insert next record from input buffer page into min heap
-            if (page.hasNext()) {
-	            Record record = page.nextRecord();
-	            this.minheap.insert(record);
-            }
+                this.out.addRecord(min);
 
-            // send output page to be written into memory if full
-            if (this.out.isFull()) {
-                String text = this.out.toString();
-                System.out.println("dbg");
-                System.out.print(text);
-                writer.writePage(text);
-                this.out = new Page(null, 0, ByteFile.RECORDS_PER_BLOCK);
+                // send output page to be written into memory if full
+                if (this.out.isFull()) {
+                    System.out.println("dbg");
+                    writeOutputBuffer();
+                }
             }
+            // flush output buffer
+            writeOutputBuffer();
+
+            // unhide records
+            minheap.setHeapSize(8 * ByteFile.RECORDS_PER_BLOCK);
+            minheap.buildHeap();
         }
         // print out remaining records in the min heap
         flushHeap();
@@ -75,11 +83,16 @@ public class Controller {
 
             // Send page to be written to memory if full
             if (this.out.isFull()) {
-                String text = this.out.toString();
-                System.out.print(text);
-                writer.writePage(text);
-                this.out = new Page(null, 0, ByteFile.RECORDS_PER_BLOCK);
+                writeOutputBuffer();
             }
         }
+        writeOutputBuffer();
+    }
+
+    private void writeOutputBuffer() throws IOException {
+        String text = this.out.toString();
+        System.out.print(text);
+        writer.writePage(text);
+        this.out = new Page(null);
     }
 }

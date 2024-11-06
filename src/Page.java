@@ -3,24 +3,30 @@ import java.nio.ByteBuffer;
 import jdk.jfr.consumer.RecordedClass;
 
 public class Page {
-    public Record[] records;
-    public int capacity;
-    public int size;
+    private Record[] records;
+    private int capacity;
+    private int size;
     private int readPos;
     private int writePos;
     
     
-    public Page(ByteBuffer dataBuffer, int inputRecordCnt, int capacity) {
-        // TODO: Make sure that all pages will be full
-        this.capacity = capacity;
-        this.size = inputRecordCnt;
+    public Page(ByteBuffer dataBuffer) {
+        this.capacity = ByteFile.RECORDS_PER_BLOCK;
+        this.size = 0;
         this.readPos = 0;
-        this.writePos = inputRecordCnt;
+        this.writePos = 0;
         this.records = new Record[capacity];
-        for (int i = 0; i < inputRecordCnt; i++) {
-            long recID = dataBuffer.getLong();
-            double recKey = dataBuffer.getDouble();
-            this.records[i] = new Record(recID, recKey);
+        if (dataBuffer == null) {
+            return;
+        }
+        else {
+            while (dataBuffer.hasRemaining()) {
+                long recID = dataBuffer.getLong();
+                double recKey = dataBuffer.getDouble();
+                this.records[size] = new Record(recID, recKey);
+                this.size++;
+            }
+            this.writePos = size;
         }
     }
 
@@ -29,9 +35,13 @@ public class Page {
         return this.records[readPos++];
     }
     
-//    public Record[] getRecords() {
-//    	return records;
-//    }
+    public Record[] getRecords() {
+        return records;
+    }
+
+    public int getSize() {
+        return size;
+    }
     
     public boolean addRecord(Record record) {
         // assert(!this.isFull()) : "failed to add record because the page is full";
