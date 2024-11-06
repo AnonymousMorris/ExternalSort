@@ -44,16 +44,16 @@ public class Page {
     }
     
     public boolean addRecord(Record record) {
-        // assert(!this.isFull()) : "failed to add record because the page is full";
-        if (this.isFull()) {
-            return false;
-        }
-        else {
+         assert(!this.isFull()) : "failed to add record because the page is full";
+//        if (this.isFull()) {
+//            return false;
+//        }
+//        else {
             this.records[writePos] = record;
             this.writePos++;
             this.size++;
             return true;
-        }
+//        }
     }
 
     public boolean hasNext() {
@@ -65,14 +65,8 @@ public class Page {
     }
 
     public String toString() {
-        String ans = "";
-        for (int i = 0; i < records.length; i++) {
-            ans += records[i].getID() + " " + records[i].getKey() + " ";
-            if (i % 5 == 4) {
-                ans += "\n";
-            }
-        }
-        return ans;
+    	assert(size > 0) : "Failed to generate string becuase page is empty";
+        return records[0].getID() + " " + records[0].getKey() + " ";
     }
 
     public boolean isEqual(Page other) {
