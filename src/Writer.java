@@ -14,7 +14,7 @@ public class Writer {
     public Writer() throws IOException {
         String filename = "tmp";
         this.tmpFile = File.createTempFile(filename, ".run");
-        this.raf = new RandomAccessFile(tmpFile, "w");
+        this.raf = new RandomAccessFile(tmpFile, "rw");
         raf.seek(0);
     }
 

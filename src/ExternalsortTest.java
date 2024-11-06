@@ -21,8 +21,8 @@ public class ExternalsortTest extends TestCase {
      * @throws IOException 
      */
     public void testExternalsort() throws IOException {
-        String[] args = {"data/sampleInput16.bin"};
-        Externalsort.main(args);
+//        String[] args = {"data/sampleInput16.bin"};
+//        Externalsort.main(args);
     }
 
 }

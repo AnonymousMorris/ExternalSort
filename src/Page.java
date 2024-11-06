@@ -25,9 +25,13 @@ public class Page {
     }
 
     public Record nextRecord() {
-        assert(!hasNext());
+        assert(hasNext());
         return this.records[readPos++];
     }
+    
+//    public Record[] getRecords() {
+//    	return records;
+//    }
     
     public boolean addRecord(Record record) {
         // assert(!this.isFull()) : "failed to add record because the page is full";
