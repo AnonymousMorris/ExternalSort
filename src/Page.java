@@ -1,3 +1,4 @@
+import java.io.BufferedReader;
 import java.nio.ByteBuffer;
 
 import jdk.jfr.consumer.RecordedClass;
@@ -28,6 +29,18 @@ public class Page {
             }
             this.writePos = size;
         }
+    }
+
+    // New constructor to initialize a Page with an array of Records
+    public Page(Record[] records, int size) {
+        this.capacity = ByteFile.RECORDS_PER_BLOCK;
+        this.records = new Record[capacity];
+        this.size = size;
+        this.readPos = 0;
+        this.writePos = size;
+        
+        // Copy records to page array
+        System.arraycopy(records, 0, this.records, 0, size);
     }
 
     public Record nextRecord() {
@@ -86,4 +99,5 @@ public class Page {
         }
         return true;
     }
+
 }
