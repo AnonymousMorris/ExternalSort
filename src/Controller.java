@@ -52,7 +52,7 @@ public class Controller {
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
                 assert(newRecord != null);
-                if (newRecord.getKey() < min.getKey()) {
+                if (newRecord.compareTo(min) < 0) {
                     // hide new record
                     this.minheap.modify(minheap.heapSize() - 1, newRecord);
                 }

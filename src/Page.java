@@ -75,9 +75,19 @@ public class Page {
         return writePos == capacity;
     }
 
+//    public String toString() {
+//    	assert(size > 0) : "Failed to generate string becuase page is empty";
+//        return records[0].getID() + " " + records[0].getKey() + " ";
+//    }
+    
     public String toString() {
-    	assert(size > 0) : "Failed to generate string becuase page is empty";
-        return records[0].getID() + " " + records[0].getKey() + " ";
+        assert(size > 0) : "Failed to generate string becuase page is empty";
+        String ans = "";
+        for (int i = 0; i < size; i++) {
+            ans += records[i].getID() + " " + records[i].getKey() + "\n";
+        }
+        ans += "\n";
+        return ans;
     }
 
     public boolean isEqual(Page other) {
