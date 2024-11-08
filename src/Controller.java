@@ -51,6 +51,7 @@ public class Controller {
                 // get Min record and push to output buffer
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
+                assert(newRecord != null);
                 if (newRecord.getKey() < min.getKey()) {
                     // hide new record
                     this.minheap.modify(minheap.heapSize() - 1, newRecord);

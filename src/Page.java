@@ -68,7 +68,7 @@ public class Page {
     }
 
     public boolean hasNext() {
-        return readPos < capacity;
+        return readPos < size;
     }
 
     public boolean isFull() {
