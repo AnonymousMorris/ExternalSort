@@ -23,7 +23,7 @@ public class ControllerTest extends TestCase {
      */
     public void testExternalsort() throws IOException {
 //        String args = "data/sampleInput16.bin";
-        String args = "data/testInput.txt";
+        String args = "data/test.txt";
         Controller controller = new Controller();
         controller.run(args);
     }
