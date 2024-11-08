@@ -38,6 +38,7 @@ public class Controller {
             sort(this.in);
         }
 
+        // TODO: account for hidden nodes
         flushHeap();
         writer.close();
     }
@@ -45,6 +46,7 @@ public class Controller {
     private void sort(Page page) throws IOException {
         while (page.hasNext()) {
             while (minheap.heapSize() > 0 && page.hasNext()) {
+                // TODO double check with video
                 // get Min record and push to output buffer
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
