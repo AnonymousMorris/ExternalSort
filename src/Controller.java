@@ -18,7 +18,7 @@ public class Controller {
     }
 
     public void run(String filename) throws IOException {
-        Reader reader = new Reader(filename);
+        Reader reader = new Reader(filename, false);
 
         // put initial 8 pages into min heap
         int heapSize = 0;

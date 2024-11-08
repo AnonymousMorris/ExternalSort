@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -11,6 +12,7 @@ public class Reader {
     private String filename;
     private RandomAccessFile raf;
     private BufferedReader textReader;  // For reading text filesprivate int writePos;
+    private boolean isBinary;
 
     public Reader(String filename) throws IOException {
         this.filename = filename;
@@ -20,7 +22,8 @@ public class Reader {
     public Reader(String filename, boolean isBinary) throws IOException {
         this.filename = filename;
         File file = new File(filename);
-        this.raf = new RandomAccessFile(file, "r");
+        this.textReader = new BufferedReader(new FileReader(filename));
+        isBinary = isBinary;
     }
 
 //    public Page nextPage() throws IOException {
@@ -61,10 +64,21 @@ public class Reader {
     }
 
     public boolean hasNext() throws IOException {
-        return raf.getFilePointer() < raf.length();
+    	if (isBinary) {
+    		return raf.getFilePointer() < raf.length();
+    	}
+    	else {
+    		return textReader.ready();
+    	}
     }
     
     public void close() throws IOException {
-        raf.close();
+        if (isBinary) {
+        	raf.close();
+        }
+        else {
+        	textReader.close();
+        }
+        
     }
 }
