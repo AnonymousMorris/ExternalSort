@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
 import java.nio.ByteBuffer;
 
-import jdk.jfr.consumer.RecordedClass;
 
 public class Page {
     private Record[] records;

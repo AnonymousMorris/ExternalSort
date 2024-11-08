@@ -23,15 +23,15 @@ public class Reader {
         this.raf = new RandomAccessFile(file, "r");
     }
 
-    public Page nextPage() throws IOException {
-        byte[] basicBuffer = new byte[ByteFile.BYTES_PER_BLOCK];
-        ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
-        raf.read(basicBuffer);
-        return new Page(bb);
-    }
+//    public Page nextPage() throws IOException {
+//        byte[] basicBuffer = new byte[ByteFile.BYTES_PER_BLOCK];
+//        ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
+//        raf.read(basicBuffer);
+//        return new Page(bb);
+//    }
     
     // Method to read next page from text file
-    public Page nextPageFromText() throws IOException {
+    public Page nextPage() throws IOException {
         if (textReader == null) {
             throw new IOException("Text reader not initialized");
         }
