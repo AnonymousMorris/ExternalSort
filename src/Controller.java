@@ -3,6 +3,7 @@ import java.io.IOException;
 public class Controller {
     // private Reader reader;
     private MinHeap<Record> minheap;
+    private MinHeap<Record> hidden;
     private Writer writer;
     private Page in;
     private Page out;
@@ -11,6 +12,8 @@ public class Controller {
     public Controller() throws IOException {
 //        Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
 //        this.minheap = new MinHeap<Record>(records, 0, ByteFile.RECORDS_PER_BLOCK);
+        Record[] emptyHeap = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
+        this.hidden = new MinHeap<>(emptyHeap, 0, ByteFile.RECORDS_PER_BLOCK * 8);
         this.writer = new Writer();
         this.in = null;
         this.out = new Page(null);
@@ -54,7 +57,7 @@ public class Controller {
                 assert(newRecord != null);
                 if (newRecord.compareTo(min) < 0) {
                     // hide new record
-                    this.minheap.modify(minheap.heapSize() - 1, newRecord);
+                    this.hidden.insert(newRecord);
                 }
                 else {
                     this.minheap.insert(newRecord);
@@ -75,8 +78,9 @@ public class Controller {
             	}
 
                 // unhide records
-                minheap.setHeapSize(8 * ByteFile.RECORDS_PER_BLOCK);
-                minheap.buildHeap();
+                this.minheap = this.hidden;
+                Record emptyHeap[] = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
+                this.hidden = new MinHeap<>(emptyHeap, 0, ByteFile.RECORDS_PER_BLOCK * 8);
             }
         }
     }
@@ -109,6 +113,6 @@ public class Controller {
         System.out.print(text);
         System.err.println();
         writer.writePage(text);
-		this.out = new Page(null);
-	}
+        this.out = new Page(null);
+    }
 }
