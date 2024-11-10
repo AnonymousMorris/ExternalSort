@@ -44,7 +44,10 @@ public class Reader {
         int count = 0;
 
         // Read lines until capacity is reached or no more lines are available
-        while ((line = textReader.readLine()) != null && count < ByteFile.RECORDS_PER_BLOCK) {
+        while (count < ByteFile.RECORDS_PER_BLOCK) {
+        	if ((line = textReader.readLine()) == null) {
+        		break;
+        	}
             String[] parts = line.split(" ");
             if (parts.length != 2) {
                 throw new IOException("Invalid record format in text file");

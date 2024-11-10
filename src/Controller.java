@@ -55,11 +55,14 @@ public class Controller {
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
                 assert(newRecord != null);
+            	System.err.print("n: " + newRecord.getKey() + "  ");
                 if (newRecord.compareTo(min) < 0) {
+                	System.err.println("n: " + newRecord.getKey());
                     // hide new record
                     this.hidden.insert(newRecord);
                 }
                 else {
+                	System.err.println("i: " + newRecord.getKey());
                     this.minheap.insert(newRecord);
                 }
 
@@ -86,7 +89,7 @@ public class Controller {
     }
 
     private void flushHeap() throws IOException {
-        while (minheap.heapSize() != 0) {
+        while (minheap.heapSize() > 0) {
         	assert(!this.out.isFull()): "output buffer is full and cannot take another record";
             Record min = minheap.removeMin();
             this.out.addRecord(min);

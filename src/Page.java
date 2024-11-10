@@ -82,9 +82,10 @@ public class Page {
     
     public String toString() {
         assert(size > 0) : "Failed to generate string becuase page is empty";
-        String ans = "";
+        String ans = "Page Size is " + this.size;
+//        String ans = "";
         for (int i = 0; i < size; i++) {
-            ans += records[i].getID() + " " + records[i].getKey() + "\n";
+            ans += records[i].getID() + " " + records[i].getKey() + " : " + i + "\n";
         }
         ans += "\n";
         return ans;
