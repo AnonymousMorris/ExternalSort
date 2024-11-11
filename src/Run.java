@@ -8,20 +8,22 @@ public class Run {
     private int len;
     private int curPos;
     private Record lastRecord;
+    private String filename;
 
-    public Run (int begin, int end) {
+    public Run (int begin, int end, String filename) {
         this.begin = begin;
         this.end = end;
         this.curPos = begin;
         this.len = end - begin;
-        this.last = null;
+        this.lastRecord = null;
+        this.filename = filename;
     }
 
     public boolean hasNext() {
         return curPos == end;
     }
     
-    public Page nextPage(String filename) throws IOException {
+    public Page nextPage() throws IOException {
         RandomAccessFile raf = new RandomAccessFile(filename, "rw");
             // Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK];
             raf.seek(this.curPos);

@@ -37,7 +37,7 @@ public class Controller {
         // sort
         while (reader.hasNext()) {
             this.in = reader.nextPage();
-            sort(this.in);
+            replacementSort(this.in);
         }
 
         // TODO: account for hidden nodes
@@ -46,7 +46,7 @@ public class Controller {
         writer.swapFile("test.txt");
     }
 
-    private void sort(Page page) throws IOException {
+    private void replacementSort(Page page) throws IOException {
         while (page.hasNext()) {
             while (minheap.heapSize() > 0 && page.hasNext()) {
                 // TODO double check with video
@@ -86,6 +86,25 @@ public class Controller {
                 this.hidden = new MinHeap<>(emptyHeap, 0, ByteFile.RECORDS_PER_BLOCK * 8);
             }
         }
+    }
+
+    private Run mergeSort(Run[] runs) throws IOException {
+        assert(runs.length <= 8);
+        assert(this.minheap.heapSize() == 0);
+
+        // initialize heap
+        Record[] heap = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
+        int heapSize = 0;
+        for (int i = 0; i < runs.length; i++) {
+            Page page = runs[i].nextPage();
+            System.arraycopy(this.in.getRecords(), 0, heap, i * ByteFile.RECORDS_PER_BLOCK, this.in.getSize());
+            heapSize += this.in.getSize();
+        }
+        minheap = new MinHeap<Record>(heap, heapSize, 8 * ByteFile.RECORDS_PER_BLOCK);
+        minheap.buildHeap();
+
+        // merge sort
+        
     }
 
     private void flushHeap() throws IOException {
