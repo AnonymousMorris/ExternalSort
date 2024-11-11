@@ -1,13 +1,19 @@
 import java.io.IOException;
 
+import sun.security.krb5.internal.LastReq;
+
 public class Controller {
     // private Reader reader;
     private MinHeap<Record> minheap;
     private MinHeap<Record> hidden;
     private Writer writer;
+    private String filename;
     private Page in;
     private Page out;
     private int count = 0;
+    private Run[] runs;
+    private int runStart;
+    private int runEnd;
 
     public Controller() throws IOException {
 //        Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
@@ -17,10 +23,14 @@ public class Controller {
         this.writer = new Writer();
         this.in = null;
         this.out = new Page(null);
+        this.runs = new Run[0];
+        this.runStart = 0;
+        this.runEnd = 0;
         // this.reader = new Reader(filename);
     }
 
     public void run(String filename) throws IOException {
+        this.filename = filename;
         Reader reader = new Reader(filename, false);
 
         // put initial 8 pages into min heap
@@ -40,7 +50,6 @@ public class Controller {
             replacementSort(this.in);
         }
 
-        // TODO: account for hidden nodes
         flushHeap();
         writer.close();
         writer.swapFile("test.txt");
@@ -49,8 +58,6 @@ public class Controller {
     private void replacementSort(Page page) throws IOException {
         while (page.hasNext()) {
             while (minheap.heapSize() > 0 && page.hasNext()) {
-                // TODO double check with video
-//            	System.err.print("dbg");
                 // get Min record and push to output buffer
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
@@ -84,6 +91,11 @@ public class Controller {
                 this.minheap = this.hidden;
                 Record emptyHeap[] = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
                 this.hidden = new MinHeap<>(emptyHeap, 0, ByteFile.RECORDS_PER_BLOCK * 8);
+
+                // add run to list
+                Run run = new Run(this.runStart, this.runEnd, this.filename);
+                this.runStart = this.runEnd + 1;
+                appendRun(run);
             }
         }
     }
@@ -119,7 +131,6 @@ public class Controller {
             }
         }
         if (this.out.getSize() > 0) {
-//        	System.err.println("dbg");
         	writeOutputBuffer();
         }
     }
@@ -136,5 +147,15 @@ public class Controller {
         System.err.println();
         writer.writePage(text);
         this.out = new Page(null);
+        this.runEnd += this.out.getSize();
+    }
+
+    private void appendRun(Run run) {
+        Run[] newRuns = new Run[this.runs.length + 1];
+        for (int i = 0; i < this.runs.length; i++) {
+            newRuns[i] = this.runs[i];
+        }
+        newRuns[newRuns.length - 1] = run;
+        this.runs = newRuns;
     }
 }

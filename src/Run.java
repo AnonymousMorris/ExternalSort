@@ -20,7 +20,7 @@ public class Run {
     }
 
     public boolean hasNext() {
-        return curPos == end;
+        return curPos <= end;
     }
     
     public Page nextPage() throws IOException {
@@ -38,6 +38,7 @@ public class Run {
         raf.close();
 
         this.lastRecord = page.getLast();
+        this.curPos += readLen;
         return page;
     }
     
