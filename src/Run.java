@@ -43,6 +43,6 @@ public class Run {
     }
     
     public boolean isLast(Record record) {
-        return this.lastRecord.getID() == record.getID();
+        return hasNext() && (this.lastRecord.getID() == record.getID());
     }
 }

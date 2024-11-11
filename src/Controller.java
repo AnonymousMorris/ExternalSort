@@ -1,7 +1,5 @@
 import java.io.IOException;
 
-import sun.security.krb5.internal.LastReq;
-
 public class Controller {
     // private Reader reader;
     private MinHeap<Record> minheap;
@@ -12,6 +10,7 @@ public class Controller {
     private Page out;
     private int count = 0;
     private Run[] runs;
+    private Run[] newRuns;
     private int runStart;
     private int runEnd;
 
@@ -24,6 +23,7 @@ public class Controller {
         this.in = null;
         this.out = new Page(null);
         this.runs = new Run[0];
+        this.newRuns = new Run[0];
         this.runStart = 0;
         this.runEnd = 0;
         // this.reader = new Reader(filename);
@@ -44,7 +44,7 @@ public class Controller {
         minheap = new MinHeap<Record>(heap, heapSize, 8 * ByteFile.RECORDS_PER_BLOCK);
         minheap.buildHeap();
 
-        // sort
+        // replacement sort
         while (reader.hasNext()) {
             this.in = reader.nextPage();
             replacementSort(this.in);
@@ -53,6 +53,28 @@ public class Controller {
         flushHeap();
         writer.close();
         writer.swapFile("test.txt");
+        
+        // merge sort
+        while (this.runs.length > 1) {
+            this.runStart = 0;
+            this.runEnd = 0;
+	        int newRunsLen = this.runs.length / 8;
+	        if ((this.runs.length % 8) > 0) {
+	        	newRunsLen++;
+	        }
+	        Run[] newRuns = new Run[newRunsLen];
+	        for (int i = 0; i < newRunsLen; i ++) {
+	        	int mergeRunLen = Math.min(8, this.runs.length - i * 8);
+	        	Run[] mergeRuns = new Run[mergeRunLen];
+	        	for (int j = 0; j < mergeRunLen; j++) {
+	        		mergeRuns[j] = this.runs[i * 8 + j];
+	        	}
+	        	newRuns[i] = mergeSort(mergeRuns);
+	        }
+	        this.runs = newRuns;
+	        writer.close();
+	        writer.swapFile("test.txt");
+        }
     }
 
     private void replacementSort(Page page) throws IOException {
@@ -95,7 +117,7 @@ public class Controller {
                 // add run to list
                 Run run = new Run(this.runStart, this.runEnd, this.filename);
                 this.runStart = this.runEnd + 1;
-                appendRun(run);
+                appendRun(run, this.runs);
             }
         }
     }
@@ -116,7 +138,37 @@ public class Controller {
         minheap.buildHeap();
 
         // merge sort
-        
+        while (hasRunning(runs)) {
+        	Record min = minheap.removeMin();
+    		this.out.addRecord(min);
+    		// insert new page from a run
+    		for (Run run : runs) {
+    			if (run.isLast(min)) {
+    				Page page = run.nextPage();
+    				while (page.hasNext()) {
+    					Record newRecord = page.nextRecord();
+    					minheap.insert(newRecord);
+    				}
+    				break;
+    			}
+    		}
+    		
+    		// send output page to be written to memory if full
+        	if (this.out.isFull()) {
+        		writeOutputBuffer();
+        	}
+        }
+        flushHeap();
+        Run run = new Run(this.runStart, this.runEnd, filename);
+        return run;
+    }
+    
+    private boolean hasRunning(Run[] runs) {
+    	boolean stillRunning = false;
+    	for (Run run : runs) {
+    		stillRunning |= run.hasNext();
+    	}
+    	return stillRunning;
     }
 
     private void flushHeap() throws IOException {
@@ -133,6 +185,8 @@ public class Controller {
         if (this.out.getSize() > 0) {
         	writeOutputBuffer();
         }
+        Run run = new Run(this.runStart, this.runEnd, this.filename);
+        appendRun(run, this.runs);
     }
 
     private void writeOutputBuffer() throws IOException {
@@ -146,16 +200,16 @@ public class Controller {
         System.out.print(text);
         System.err.println();
         writer.writePage(text);
-        this.out = new Page(null);
         this.runEnd += this.out.getSize();
+        this.out = new Page(null);
     }
 
-    private void appendRun(Run run) {
-        Run[] newRuns = new Run[this.runs.length + 1];
+    private void appendRun(Run run, Run[] runsArray) {
+        Run[] newRuns = new Run[runsArray.length + 1];
         for (int i = 0; i < this.runs.length; i++) {
-            newRuns[i] = this.runs[i];
+            newRuns[i] = runsArray[i];
         }
         newRuns[newRuns.length - 1] = run;
-        this.runs = newRuns;
+        runsArray = newRuns;
     }
 }
