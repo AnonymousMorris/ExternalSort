@@ -74,6 +74,10 @@ public class Page {
     public boolean isFull() {
         return writePos == capacity;
     }
+    
+    public Record getLast() {
+        return this.records[size];
+    }
 
 //    public String toString() {
 //    	assert(size > 0) : "Failed to generate string becuase page is empty";
