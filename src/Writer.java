@@ -10,7 +10,7 @@ public class Writer {
 
     private File tmpFile;
     private RandomAccessFile raf;
-    
+
     public Writer() throws IOException {
         String filename = "tmp";
         this.tmpFile = File.createTempFile(filename, ".run");
@@ -20,6 +20,17 @@ public class Writer {
 
     public void writePage(String text) throws IOException {
         this.raf.write(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void writePage(Page page) throws IOException {
+        byte[] basicBuffer = new byte[page.getSize()];
+        ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
+        while (page.hasNext()) {
+            Record record = page.nextRecord();
+            bb.putLong(record.getID());
+            bb.putDouble(record.getKey());
+        }
+        this.raf.write(basicBuffer);
     }
 
     public void swapFile(String filename) throws IOException {
