@@ -48,7 +48,7 @@ public class Controller {
             replacementSort(this.in);
         }
 
-        flushHeap();
+        flushHeap(true);
         // add run to list
         Run run = new Run(this.runStart, this.runEnd, this.filename);
         this.runs = appendRun(run, this.runs);
@@ -103,14 +103,14 @@ public class Controller {
 
                 // send output page to be written into memory if full
                 if (this.out.isFull()) {
-                    writeOutputBuffer();
+                    writeOutputBuffer(true);
                 }
             }
             if (minheap.heapSize() == 0) {
                 System.err.print("minheap is empty");
                 if (this.out.getSize() > 0) {
                     // flush output buffer
-                    writeOutputBuffer();
+                    writeOutputBuffer(true);
                 }
 
                 // unhide records
@@ -159,10 +159,10 @@ public class Controller {
 
             // send output page to be written to memory if full
             if (this.out.isFull()) {
-                writeOutputBuffer();
+                writeOutputBuffer(false);
             }
         }
-        flushHeap();
+        flushHeap(false);
         Run run = new Run(this.runStart, this.runEnd, filename);
         return run;
     }
@@ -175,7 +175,7 @@ public class Controller {
         return stillRunning;
     }
 
-    private void flushHeap() throws IOException {
+    private void flushHeap(boolean binary) throws IOException {
         while (minheap.heapSize() > 0) {
             assert(!this.out.isFull()): "output buffer is full and cannot take another record";
             Record min = minheap.removeMin();
@@ -183,15 +183,15 @@ public class Controller {
 
             // Send page to be written to memory if full
             if (this.out.isFull()) {
-                writeOutputBuffer();
+                writeOutputBuffer(binary);
             }
         }
         if (this.out.getSize() > 0) {
-            writeOutputBuffer();
+            writeOutputBuffer(binary);
         }
     }
 
-    private void writeOutputBuffer() throws IOException {
+    private void writeOutputBuffer(boolean binary) throws IOException {
         String text = this.out.toString();
 //        if (this.count == 5) {
 //            text = "\n" + text;
@@ -201,8 +201,8 @@ public class Controller {
 
         System.out.print(text);
         System.err.println();
-        writer.writePage(this.out);
-//         writer.writePage(text);
+        if (binary) writer.writePage(this.out);
+        else writer.writePage(text);
         this.runEnd += this.out.getSize() * ByteFile.BYTES_PER_RECORD;
         this.out = new Page(null);
     }
