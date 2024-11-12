@@ -79,6 +79,7 @@ public class Controller {
             writer.close();
             writer.swapFile("test.txt");
         }
+        print();
     }
 
     private void replacementSort(Page page) throws IOException {
@@ -88,14 +89,14 @@ public class Controller {
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
                 assert(newRecord != null);
-                System.err.print("n: " + newRecord.getKey() + "  ");
+//                System.err.print("n: " + newRecord.getKey() + "  ");
                 if (newRecord.compareTo(min) < 0) {
-                    System.err.println("n: " + newRecord.getKey());
+//                    System.err.println("n: " + newRecord.getKey());
                     // hide new record
                     this.hidden.insert(newRecord);
                 }
                 else {
-                    System.err.println("i: " + newRecord.getKey());
+//                    System.err.println("i: " + newRecord.getKey());
                     this.minheap.insert(newRecord);
                 }
 
@@ -107,7 +108,7 @@ public class Controller {
                 }
             }
             if (minheap.heapSize() == 0) {
-                System.err.print("minheap is empty");
+//                System.err.print("minheap is empty");
                 if (this.out.getSize() > 0) {
                     // flush output buffer
                     writeOutputBuffer(true);
@@ -197,14 +198,29 @@ public class Controller {
 //            text = "\n" + text;
 //            this.count = 0;
 //        }
-        this.count++;
+//        this.count++;
 
-        System.out.print(text);
-        System.err.println();
+//        System.out.print(text);
+//        System.err.println();
         if (binary) writer.writePage(this.out);
         else writer.writePage(text);
         this.runEnd += this.out.getSize() * ByteFile.BYTES_PER_RECORD;
         this.out = new Page(null);
+    }
+    
+    public void print() throws IOException {
+    	Reader reader = new Reader(filename);
+    	while(reader.hasNext()) {
+    		Page page = reader.nextPage();
+            String text = this.out.toString();
+            this.count++;
+            if (this.count == 5) {
+            	text = "\n" + text;
+            	this.count = 0;
+			}
+            System.out.print(text);
+    	}
+    	reader.close();
     }
 
     private Run[] appendRun(Run run, Run[] runsArray) {
