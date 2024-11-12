@@ -76,7 +76,7 @@ public class Page {
     }
     
     public Record getLast() {
-        return this.records[size];
+        return this.records[size - 1];
     }
 
 //    public String toString() {
@@ -86,12 +86,12 @@ public class Page {
     
     public String toString() {
         assert(size > 0) : "Failed to generate string becuase page is empty";
-        String ans = "Page Size is " + this.size;
-//        String ans = "";
+//        String ans = "Page Size is " + this.size;
+        String ans = "";
         for (int i = 0; i < size; i++) {
-            ans += records[i].getID() + " " + records[i].getKey() + " : " + i + "\n";
+            ans += records[i].getID() + " " + records[i].getKey() + "\n";
         }
-        ans += "\n";
+//        ans += "\n";
         return ans;
     }
 

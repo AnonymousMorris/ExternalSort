@@ -10,7 +10,6 @@ public class Controller {
     private Page out;
     private int count = 0;
     private Run[] runs;
-    private Run[] newRuns;
     private int runStart;
     private int runEnd;
 
@@ -23,7 +22,6 @@ public class Controller {
         this.in = null;
         this.out = new Page(null);
         this.runs = new Run[0];
-        this.newRuns = new Run[0];
         this.runStart = 0;
         this.runEnd = 0;
         // this.reader = new Reader(filename);
@@ -51,9 +49,15 @@ public class Controller {
         }
 
         flushHeap();
+        // add run to list
+        Run run = new Run(this.runStart, this.runEnd, this.filename);
+        this.runs = appendRun(run, this.runs);
+        // close file readers and write file back
+        reader.close();
         writer.close();
-        writer.swapFile("test.txt");
-
+        writer.swapFile(filename);
+        
+        this.writer = new Writer();
         // merge sort
         while (this.runs.length > 1) {
             this.runStart = 0;
@@ -117,7 +121,7 @@ public class Controller {
                 // add run to list
                 Run run = new Run(this.runStart, this.runEnd, this.filename);
                 this.runStart = this.runEnd;
-                appendRun(run, this.runs);
+                this.runs = appendRun(run, this.runs);
             }
         }
     }
@@ -132,7 +136,7 @@ public class Controller {
         for (int i = 0; i < runs.length; i++) {
             Page page = runs[i].nextPage();
             System.arraycopy(page.getRecords(), 0, heap, i * ByteFile.RECORDS_PER_BLOCK, page.getSize());
-            heapSize += this.in.getSize();
+            heapSize += page.getSize();
         }
         minheap = new MinHeap<Record>(heap, heapSize, 8 * ByteFile.RECORDS_PER_BLOCK);
         minheap.buildHeap();
@@ -143,7 +147,7 @@ public class Controller {
             this.out.addRecord(min);
             // insert new page from a run
             for (Run run : runs) {
-                if (run.isLast(min)) {
+                if (run.isLast(min) && run.hasNext()) {
                     Page page = run.nextPage();
                     while (page.hasNext()) {
                         Record newRecord = page.nextRecord();
@@ -185,32 +189,30 @@ public class Controller {
         if (this.out.getSize() > 0) {
             writeOutputBuffer();
         }
-        Run run = new Run(this.runStart, this.runEnd, this.filename);
-        appendRun(run, this.runs);
     }
 
     private void writeOutputBuffer() throws IOException {
         String text = this.out.toString();
-        if (this.count == 5) {
-            text = "\n" + text;
-            this.count = 0;
-        }
+//        if (this.count == 5) {
+//            text = "\n" + text;
+//            this.count = 0;
+//        }
         this.count++;
 
         System.out.print(text);
         System.err.println();
         writer.writePage(this.out);
-        // writer.writePage(text);
+//         writer.writePage(text);
         this.runEnd += this.out.getSize() * ByteFile.BYTES_PER_RECORD;
         this.out = new Page(null);
     }
 
-    private void appendRun(Run run, Run[] runsArray) {
+    private Run[] appendRun(Run run, Run[] runsArray) {
         Run[] newRuns = new Run[runsArray.length + 1];
         for (int i = 0; i < this.runs.length; i++) {
             newRuns[i] = runsArray[i];
         }
         newRuns[newRuns.length - 1] = run;
-        runsArray = newRuns;
+        return newRuns;
     }
 }

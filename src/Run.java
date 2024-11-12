@@ -20,7 +20,7 @@ public class Run {
     }
 
     public boolean hasNext() {
-        return curPos <= end;
+        return curPos < end;
     }
     
     public Page nextPage() throws IOException {

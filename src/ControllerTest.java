@@ -24,7 +24,8 @@ public class ControllerTest extends TestCase {
     public void testExternalsort() throws IOException {
 //        String args = "data/sampleInput16.bin";
 //        String args = "data/test.txt";
-    	String args = "gen/test.txt";
+//    	String args = "gen/test.txt";
+    	String args = "test.txt";
         Controller controller = new Controller();
         controller.run(args);
     }

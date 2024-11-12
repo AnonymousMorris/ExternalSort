@@ -23,7 +23,7 @@ public class Writer {
     }
 
     public void writePage(Page page) throws IOException {
-        byte[] basicBuffer = new byte[page.getSize()];
+        byte[] basicBuffer = new byte[page.getSize() * ByteFile.BYTES_PER_RECORD];
         ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
         while (page.hasNext()) {
             Record record = page.nextRecord();
