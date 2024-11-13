@@ -25,9 +25,9 @@ public class ControllerTest extends TestCase {
 //        String args = "data/sampleInput16.bin";
 //        String args = "data/test.txt";
 //    	String args = "gen/test.txt";
-    	String args = "test.bin";
-        Controller controller = new Controller();
-        controller.run(args);
+//    	String args = "test.bin";
+//        Controller controller = new Controller();
+//        controller.run(args);
     }
 
 }

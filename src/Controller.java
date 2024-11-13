@@ -65,9 +65,6 @@ public class Controller {
         writer.close();
         writer.swapFile(filename);
         
-//        print();
-//        System.err.println();
-//        System.err.println();
         this.count = 0;
         
         this.writer = new Writer();
@@ -102,14 +99,11 @@ public class Controller {
                 Record min = this.minheap.removeMin();
                 Record newRecord = page.nextRecord();
                 assert(newRecord != null);
-//                System.err.print("n: " + newRecord.getKey() + "  ");
                 if (newRecord.compareTo(min) < 0) {
-//                    System.err.println("n: " + newRecord.getKey());
                     // hide new record
                     this.hidden.insert(newRecord);
                 }
                 else {
-//                    System.err.println("i: " + newRecord.getKey());
                     this.minheap.insert(newRecord);
                 }
 
@@ -121,7 +115,6 @@ public class Controller {
                 }
             }
             if (minheap.heapSize() == 0) {
-//                System.err.print("minheap is empty");
                 if (this.out.getSize() > 0) {
                     // flush output buffer
                     writeOutputBuffer(true);
