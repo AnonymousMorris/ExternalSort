@@ -7,8 +7,8 @@ public class Page {
     private int size;
     private int readPos;
     private int writePos;
-    
-    
+
+
     public Page(ByteBuffer dataBuffer) {
         this.capacity = ByteFile.RECORDS_PER_BLOCK;
         this.size = 0;
@@ -36,7 +36,7 @@ public class Page {
         this.size = size;
         this.readPos = 0;
         this.writePos = size;
-        
+
         // Copy records to page array
         System.arraycopy(records, 0, this.records, 0, size);
     }
@@ -45,7 +45,7 @@ public class Page {
         assert(hasNext());
         return this.records[readPos++];
     }
-    
+
     public Record[] getRecords() {
         return records;
     }
@@ -53,18 +53,12 @@ public class Page {
     public int getSize() {
         return size;
     }
-    
-    public boolean addRecord(Record record) {
-         assert(!this.isFull()) : "failed to add record because the page is full";
-//        if (this.isFull()) {
-//            return false;
-//        }
-//        else {
-            this.records[writePos] = record;
-            this.writePos++;
-            this.size++;
-            return true;
-//        }
+
+    public void addRecord(Record record) {
+        assert(!this.isFull()) : "failed to add record because the page is full";
+        this.records[writePos] = record;
+        this.writePos++;
+        this.size++;
     }
 
     public boolean hasNext() {
@@ -74,26 +68,26 @@ public class Page {
     public boolean isFull() {
         return writePos == capacity;
     }
-    
+
     public Record getLast() {
         return this.records[size - 1];
     }
 
     public String toString() {
-    	assert(size > 0) : "Failed to generate string becuase page is empty";
+        assert(size > 0) : "Failed to generate string becuase page is empty";
         return records[0].getID() + " " + records[0].getKey() + " ";
     }
-    
-//    public String toString() {
-//        assert(size > 0) : "Failed to generate string becuase page is empty";
-////        String ans = "Page Size is " + this.size;
-//        String ans = "";
-//        for (int i = 0; i < size; i++) {
-//            ans += records[i].getID() + " " + records[i].getKey() + "\n";
-//        }
-////        ans += "\n";
-//        return ans;
-//    }
+
+    //    public String toString() {
+    //        assert(size > 0) : "Failed to generate string becuase page is empty";
+    ////        String ans = "Page Size is " + this.size;
+    //        String ans = "";
+    //        for (int i = 0; i < size; i++) {
+    //            ans += records[i].getID() + " " + records[i].getKey() + "\n";
+    //        }
+    ////        ans += "\n";
+    //        return ans;
+    //    }
 
     public boolean isEqual(Page other) {
         if (this.capacity != other.capacity) {

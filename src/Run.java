@@ -22,26 +22,26 @@ public class Run {
     public boolean hasNext() {
         return curPos < end;
     }
-    
+
     public Page nextPage() throws IOException {
         RandomAccessFile raf = new RandomAccessFile(filename, "rw");
-            // Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK];
-            raf.seek(this.curPos);
-            int readLen = ByteFile.BYTES_PER_BLOCK;
-            if ((end - curPos) < ByteFile.BYTES_PER_BLOCK) {
-                readLen = end - curPos;
-            }
-            byte[] basicBuffer = new byte[readLen];
-            raf.read(basicBuffer, 0, readLen);
-            ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
-            Page page = new Page(bb);
+        // Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK];
+        raf.seek(this.curPos);
+        int readLen = ByteFile.BYTES_PER_BLOCK;
+        if ((end - curPos) < ByteFile.BYTES_PER_BLOCK) {
+            readLen = end - curPos;
+        }
+        byte[] basicBuffer = new byte[readLen];
+        raf.read(basicBuffer, 0, readLen);
+        ByteBuffer bb = ByteBuffer.wrap(basicBuffer);
+        Page page = new Page(bb);
         raf.close();
 
         this.lastRecord = page.getLast();
         this.curPos += readLen;
         return page;
     }
-    
+
     public boolean isLast(Record record) {
         return hasNext() && (this.lastRecord.getID() == record.getID());
     }

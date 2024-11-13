@@ -43,7 +43,5 @@ public class Externalsort {
         String filename = args[0];
         Controller controller = new Controller();
         controller.run(filename);
-        
     }
-
 }
