@@ -29,7 +29,8 @@ public class Controller {
 
     public void run(String filename) throws IOException {
         this.filename = filename;
-        Reader reader = new Reader(filename, false);
+        // Reader reader = new Reader(filename, false);
+        Reader reader = new Reader(filename);
 
         // put initial 8 pages into min heap
         int heapSize = 0;
@@ -160,10 +161,10 @@ public class Controller {
 
             // send output page to be written to memory if full
             if (this.out.isFull()) {
-                writeOutputBuffer(false);
+                writeOutputBuffer(true);
             }
         }
-        flushHeap(false);
+        flushHeap(true);
         Run run = new Run(this.runStart, this.runEnd, filename);
         return run;
     }

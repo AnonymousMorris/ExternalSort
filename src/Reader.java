@@ -12,19 +12,19 @@ public class Reader {
     private String filename;
     private RandomAccessFile raf;
     private BufferedReader textReader;  // For reading text filesprivate int writePos;
-    private boolean isBinary;
+    private boolean isBinary = true;
 
     public Reader(String filename) throws IOException {
         this.filename = filename;
         File file = new File(filename);
         this.raf = new RandomAccessFile(file, "r");
     }
-    public Reader(String filename, boolean isBinary) throws IOException {
-        this.filename = filename;
-        File file = new File(filename);
-        this.textReader = new BufferedReader(new FileReader(filename));
-        isBinary = isBinary;
-    }
+    // public Reader(String filename, boolean isBinary) throws IOException {
+    //     this.filename = filename;
+    //     File file = new File(filename);
+    //     this.textReader = new BufferedReader(new FileReader(filename));
+    //     isBinary = isBinary;
+    // }
 
 //    public Page nextPage() throws IOException {
 //        byte[] basicBuffer = new byte[ByteFile.BYTES_PER_BLOCK];
