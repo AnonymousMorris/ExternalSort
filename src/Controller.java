@@ -14,8 +14,6 @@ public class Controller {
     private int runEnd;
 
     public Controller() throws IOException {
-        //        Record[] records = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
-        //        this.minheap = new MinHeap<Record>(records, 0, ByteFile.RECORDS_PER_BLOCK);
         Record[] emptyHeap = new Record[ByteFile.RECORDS_PER_BLOCK * 8];
         this.hidden = new MinHeap<>(emptyHeap, 0, ByteFile.RECORDS_PER_BLOCK * 8);
         this.writer = new Writer();
@@ -24,7 +22,6 @@ public class Controller {
         this.runs = new Run[0];
         this.runStart = 0;
         this.runEnd = 0;
-        // this.reader = new Reader(filename);
     }
 
     public void run(String filename) throws IOException {
@@ -52,11 +49,26 @@ public class Controller {
         flushHeap(true);
         // add run to list
         Run run = new Run(this.runStart, this.runEnd, this.filename);
+        this.runStart = this.runEnd;
         this.runs = appendRun(run, this.runs);
+        
+        if (this.hidden.heapSize() > 0) {
+        	this.minheap = this.hidden;
+        	this.hidden = null;
+        	flushHeap(true);
+        	run = new Run(this.runStart, this.runEnd, this.filename);
+            this.runStart = this.runEnd;
+            this.runs = appendRun(run, this.runs);
+        }
         // close file readers and write file back
         reader.close();
         writer.close();
         writer.swapFile(filename);
+        
+        print();
+        System.err.println();
+        System.err.println();
+        this.count = 0;
         
         this.writer = new Writer();
         // merge sort
@@ -166,6 +178,7 @@ public class Controller {
         }
         flushHeap(true);
         Run run = new Run(this.runStart, this.runEnd, filename);
+        this.runStart = this.runEnd;
         return run;
     }
 
@@ -195,14 +208,6 @@ public class Controller {
 
     private void writeOutputBuffer(boolean binary) throws IOException {
         String text = this.out.toString();
-//        if (this.count == 5) {
-//            text = "\n" + text;
-//            this.count = 0;
-//        }
-//        this.count++;
-
-//        System.out.print(text);
-//        System.err.println();
         if (binary) writer.writePage(this.out);
         else writer.writePage(text);
         this.runEnd += this.out.getSize() * ByteFile.BYTES_PER_RECORD;
@@ -213,12 +218,12 @@ public class Controller {
     	Reader reader = new Reader(filename);
     	while(reader.hasNext()) {
     		Page page = reader.nextPage();
-            String text = this.out.toString();
-            this.count++;
+            String text = page.toString();
             if (this.count == 5) {
             	text = "\n" + text;
             	this.count = 0;
 			}
+            this.count++;
             System.out.print(text);
     	}
     	reader.close();
