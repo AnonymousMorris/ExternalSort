@@ -65,9 +65,9 @@ public class Controller {
         writer.close();
         writer.swapFile(filename);
         
-        print();
-        System.err.println();
-        System.err.println();
+//        print();
+//        System.err.println();
+//        System.err.println();
         this.count = 0;
         
         this.writer = new Writer();
@@ -90,7 +90,7 @@ public class Controller {
             }
             this.runs = newRuns;
             writer.close();
-            writer.swapFile("test.txt");
+            writer.swapFile(filename);
         }
         print();
     }
@@ -161,7 +161,7 @@ public class Controller {
             this.out.addRecord(min);
             // insert new page from a run
             for (Run run : runs) {
-                if (run.isLast(min) && run.hasNext()) {
+                if (run.hasNext() && run.isLast(min)) {
                     Page page = run.nextPage();
                     while (page.hasNext()) {
                         Record newRecord = page.nextRecord();
