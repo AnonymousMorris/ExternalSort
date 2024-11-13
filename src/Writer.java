@@ -13,7 +13,9 @@ public class Writer {
 
     public Writer() throws IOException {
         String filename = "tmp";
-        this.tmpFile = File.createTempFile(filename, ".run");
+        this.tmpFile = new File(filename + ".run");
+//        this.tmpFile = File.createTempFile(filename, ".run");
+        this.tmpFile.createNewFile();
         this.raf = new RandomAccessFile(tmpFile, "rw");
         raf.seek(0);
     }
@@ -35,8 +37,8 @@ public class Writer {
 
     public void swapFile(String filename) throws IOException {
         File originalFile = new File(filename);
+        originalFile.delete();
         Files.move(tmpFile.toPath(), originalFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        raf.close();
     }
 
     public void close() throws IOException {
