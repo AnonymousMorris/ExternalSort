@@ -51,12 +51,12 @@ public class Controller {
         Run run = new Run(this.runStart, this.runEnd, this.filename);
         this.runStart = this.runEnd;
         this.runs = appendRun(run, this.runs);
-        
+
         if (this.hidden.heapSize() > 0) {
-        	this.minheap = this.hidden;
-        	this.hidden = null;
-        	flushHeap(true);
-        	run = new Run(this.runStart, this.runEnd, this.filename);
+            this.minheap = this.hidden;
+            this.hidden = null;
+            flushHeap(true);
+            run = new Run(this.runStart, this.runEnd, this.filename);
             this.runStart = this.runEnd;
             this.runs = appendRun(run, this.runs);
         }
@@ -64,9 +64,9 @@ public class Controller {
         reader.close();
         writer.close();
         writer.swapFile(filename);
-        
+
         this.count = 0;
-        
+
         this.writer = new Writer();
         // merge sort
         while (this.runs.length > 1) {
@@ -206,20 +206,20 @@ public class Controller {
         this.runEnd += this.out.getSize() * ByteFile.BYTES_PER_RECORD;
         this.out = new Page(null);
     }
-    
+
     public void print() throws IOException {
-    	Reader reader = new Reader(filename);
-    	while(reader.hasNext()) {
-    		Page page = reader.nextPage();
+        Reader reader = new Reader(filename);
+        while(reader.hasNext()) {
+            Page page = reader.nextPage();
             String text = page.toString();
             if (this.count == 5) {
-            	text = "\n" + text;
-            	this.count = 0;
-			}
+                text = "\n" + text;
+                this.count = 0;
+            }
             this.count++;
             System.out.print(text);
-    	}
-    	reader.close();
+        }
+        reader.close();
     }
 
     private Run[] appendRun(Run run, Run[] runsArray) {
