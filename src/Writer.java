@@ -12,8 +12,7 @@ public class Writer {
     private RandomAccessFile raf;
 
     public Writer() throws IOException {
-        String filename = "tmp";
-        this.tmpFile = new File(filename + ".run");
+        this.tmpFile = new File("run.bin");
 //        this.tmpFile = File.createTempFile(filename, ".run");
         this.tmpFile.createNewFile();
         this.raf = new RandomAccessFile(tmpFile, "rw");
@@ -36,12 +35,12 @@ public class Writer {
     }
 
     public void swapFile(String filename) throws IOException {
+    	this.raf.close();
         File originalFile = new File(filename);
-        originalFile.delete();
-        Files.move(tmpFile.toPath(), originalFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    }
-
-    public void close() throws IOException {
-        this.raf.close();
+        if (originalFile.exists()) {
+            originalFile.delete();
+        }
+        this.tmpFile.renameTo(originalFile);
+//        Files.move(tmpFile.toPath(), originalFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }

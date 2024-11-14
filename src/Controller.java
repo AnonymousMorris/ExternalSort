@@ -62,7 +62,6 @@ public class Controller {
         }
         // close file readers and write file back
         reader.close();
-        writer.close();
         writer.swapFile(filename);
 
         this.count = 0;
@@ -86,7 +85,6 @@ public class Controller {
                 newRuns[i] = mergeSort(mergeRuns);
             }
             this.runs = newRuns;
-            writer.close();
             writer.swapFile(filename);
         }
         print();
