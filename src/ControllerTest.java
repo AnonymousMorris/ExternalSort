@@ -39,7 +39,7 @@ public class ControllerTest extends TestCase {
         Controller controller = new Controller();
         controller.run(filename);
         // check data
-        bytefile.isSorted();
+        assertTrue(bytefile.isSorted());
     }
 
     public void testWithGen1000() throws IOException{
@@ -51,7 +51,7 @@ public class ControllerTest extends TestCase {
         Controller controller = new Controller();
         controller.run(filename);
         // check data
-        bytefile.isSorted();
+        assertTrue(bytefile.isSorted());
     }
 
     public void testWithGenWeirdNumber() throws IOException{
@@ -63,7 +63,7 @@ public class ControllerTest extends TestCase {
         Controller controller = new Controller();
         controller.run(filename);
         // check data
-        bytefile.isSorted();
+        assertTrue(bytefile.isSorted());
     }
 
 }

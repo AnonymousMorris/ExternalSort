@@ -66,9 +66,9 @@ public class Controller {
 
         this.count = 0;
 
-        this.writer = new Writer();
         // merge sort
         while (this.runs.length > 1) {
+            this.writer = new Writer();
             this.runStart = 0;
             this.runEnd = 0;
             int newRunsLen = this.runs.length / 8;
